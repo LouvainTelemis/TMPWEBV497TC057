@@ -11,9 +11,14 @@ Library    BuiltIn
 
 *** Variables ***
 
-${MyRepositoryName}    TMPWEBV497TC341
+${MyRepositoryName}    TMPWEBV497TC057
 # You must create the folder "MyFolderWorkspace" manually in the computer of Jenkins master, in case you test the script with the computer of Jenkins master
 ${MyFolderWorkspace}    C:/000/jenkins/workspace
+${base_url_smtp_server}    http://localhost:8070
+
+${MyPatient1FamilyName}    AZ127431
+${MyPatient1FirstName}    ALBERT
+${MyPatient1SeriesDescription}    CTOP127431
 
 ${MyHostname}    demo5757
 ${MyPortNumber}    10000
@@ -27,8 +32,13 @@ ${MyBrowser3}    edge
 ${TmpWebAdministratorLogin}    telemis_webadmin
 ${TmpWebAdministratorPassword}    KEYCLOAKTastouk!
 
-${TmpWebAnthonyLogin}    anthony
-${TmpWebAnthonyPassword}    Videogames2024
+${TmpWebUser1Login}    anthony
+${TmpWebUser1Password}    Videogames2024
+${TmpWebUser1Email}    anthony@hospital8.com
+
+${TmpWebUser2Login}    albert
+${TmpWebUser2Password}    Videogames2024
+${TmpWebUser2Email}    albert@hospital8.com
 
 # NOT USEFUL ${MyFolderResults}    results
 ${MyLogFile}    MyLogFile.log
@@ -229,6 +239,16 @@ Log Out My User Session Of TMP Web
     Sleep    2s
 
 
+Delete All My Email Messages In SMTP Server
+    [Documentation]    Delete all the email messages in SMTP server
+    Create Session    AppAccess    ${base_url_smtp_server}
+    ${response} =    Delete On Session    AppAccess    /api/emails
+    log    ${response.status_code}
+    log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Sleep    2s
+
+
 
 *** Test Cases ***
 
@@ -239,246 +259,126 @@ Test01
 
 
 Test02
-    [Documentation]    Open URL with Chrome
+    [Documentation]    Test and check SMTP server
     [Tags]    TC002
-    Open Browser    https://${MyHostname}.telemiscloud.com/tmpweb/patients.app    Chrome    options=add_argument("--disable-infobars");add_argument("--lang\=en");binary_location=r"C:\\000\\chromeWin64ForTests\\chrome.exe"
-    Wait Until Page Contains    TM-Publisher web    timeout=15s
-    Wait Until Element Is Visible    id=kc-current-locale-link    timeout=15s
-    Wait Until Element Is Visible    id=kc-registration    timeout=15s
+    Open Browser    http://localhost:8070/    Chrome    options=add_argument("--disable-infobars");add_argument("--lang\=en");binary_location=r"C:\\000\\chromeWin64ForTests\\chrome.exe"
     Maximize Browser Window
+    Wait Until Page Contains    FakeSMTPServer    timeout=15s
+    Wait Until Page Contains    Inbox    timeout=15s
 
 
 Test03
-    [Documentation]    Select the language
+    [Documentation]    Reset the list of email messages in SMTP server
     [Tags]    TC003
-    ${c} =    Get Element Count    id=kc-current-locale-link
-    Run Keyword If    ${c}>0    Click Element    id=kc-current-locale-link
+    Delete All My Email Messages In SMTP Server
     Sleep    2s
-    # The keyword Select From List By Index/Label/Value does not work with the combo box of this web page
-    Wait Until Element Is Visible    link=English    timeout=9s
-    Element Should Be Visible    link=English
+    Go To    http://localhost:8070/
     Sleep    1s
-    Click Element    link=English
-    Mouse Over    id=kc-login
+    Close All Browsers
 
 
 Test04
-    [Documentation]    Click the link Sign up
+    [Documentation]    Limited user account enters the login and password in order to access the website of TMP Web
     [Tags]    TC004
-    Element Should Be Visible    id=kc-registration
-    Click Element    id=kc-registration
-    Wait Until Page Contains    Medical number    timeout=15s
-    Sleep    2s
+    My User Opens Internet Browser And Connects To My TMP Web    ${TmpWebUser2Login}    ${TmpWebUser2Password}
 
 
 Test05
-    [Documentation]    Fill out the form of Sign up
+    [Documentation]    Limited user account is looking for the study
     [Tags]    TC005
-    Wait Until Element Is Visible    id=username    timeout=15s
-    Wait Until Page Contains    Login    timeout=15s
-    Input Text    id=username    anthony    clear=True
+    Wait Until Element Is Visible    link=My Patients    timeout=15s
+    Click Link    link=My Patients
     Sleep    1s
-    Textfield Value Should Be    id=username    anthony
-
-    Wait Until Element Is Visible    id=firstName    timeout=15s
-    Wait Until Page Contains    First name    timeout=15s
-    Input Text    id=firstName    Anthony    clear=True
+    Wait Until Page Contains    My Patients    timeout=15s
+    Wait Until Element Is Visible    id=searchInput    timeout=15s
     Sleep    1s
-    Textfield Value Should Be    id=firstName    Anthony
-
-    Wait Until Element Is Visible    id=lastName    timeout=15s
-    Wait Until Page Contains    Last name    timeout=15s
-    Input Text    id=lastName    Smith    clear=True
+    Input Text    id=searchInput    ${MyPatient1FamilyName}^${MyPatient1FirstName}    clear=True
     Sleep    1s
-    Textfield Value Should Be    id=lastName    Smith
-
-    Wait Until Element Is Visible    id=password    timeout=15s
-    Wait Until Page Contains    Password    timeout=15s
-    Input Text    id=password    Videogames2024    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=password    Videogames2024
-
-    Wait Until Element Is Visible    id=password-confirm    timeout=15s
-    Wait Until Page Contains    Confirm password    timeout=15s
-    Input Text    id=password-confirm    Videogames2024    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=password-confirm    Videogames2024
-
-    Wait Until Element Is Visible    id=email    timeout=15s
-    Wait Until Page Contains    Email    timeout=15s
-    Input Text    id=email    anthony@hospital8.com    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=email    anthony@hospital8.com
-
-    Wait Until Element Is Visible    id=user.attributes.phone    timeout=15s
-    Wait Until Page Contains    Phone    timeout=15s
-    Input Text    id=user.attributes.phone    020123456    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=user.attributes.phone    020123456
-
-    Wait Until Element Is Visible    id=user.attributes.phone.professional    timeout=15s
-    Wait Until Page Contains    Professionnal phone    timeout=15s
-    Input Text    id=user.attributes.phone.professional    020456789    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=user.attributes.phone.professional    020456789
-
-    Wait Until Element Is Visible    id=user.attributes.phone.mobile    timeout=15s
-    Wait Until Page Contains    Mobile phone    timeout=15s
-    Input Text    id=user.attributes.phone.mobile    0477123456    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=user.attributes.phone.mobile    0477123456
-
-    Wait Until Element Is Visible    id=user.attributes.address    timeout=15s
-    Wait Until Page Contains    Address    timeout=15s
-    Input Text    id=user.attributes.address    4 rue Athena 1348 Louvain    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=user.attributes.address    4 rue Athena 1348 Louvain
-
-    Wait Until Element Is Visible    id=user.attributes.medical.number    timeout=15s
-    Wait Until Page Contains    Medical number    timeout=15s
-    Sleep    1s
-
-    Take My Screenshot
+    Textfield Value Should Be    id=searchInput    ${MyPatient1FamilyName}^${MyPatient1FirstName}
+    Press Keys    id=searchInput    ENTER
+    Wait Until Element Is Visible    link=${MyPatient1FamilyName} ${MyPatient1FirstName}    timeout=15s
 
 
 Test06
-    [Documentation]    Click the button SIGN UP
+    [Documentation]    Limited user account selects and opens the study on the web page
     [Tags]    TC006
-    Click element    id=logo
-    Press Keys    None    PAGE_DOWN
-    Sleep    2s
-    Wait Until Element Is Visible    css=.button    timeout=15s
-    Page Should Contain Button    css=.button    timeout=15s
-    Click Button    css=.button
-    # The application can not open the next page, the bug has not been solved yet
-    Wait Until Page Contains    502 Bad Gateway    timeout=15s
-    Sleep    2s
-    # Quit the error page
-    Go To    https://${MyHostname}:8444/auth/
-    Wait Until Page Contains    Centrally manage all aspects of the Keycloak server    timeout=15s
-    Sleep    1s
-    # Log out the current user session. If not, the administrator can not connect to TMP Web.
-    Go To    https://${MyHostname}.telemiscloud.com/tmpweb/logout
-    Wait Until Page Contains    TM-Publisher web    timeout=15s
-    Wait Until Element Is Visible    xpath=//*[@id="doctor-button"]    timeout=15s
-    Sleep    2s
-    Close All Browsers
-    Sleep    2s
+    Page Should Contain Link    link=${MyPatient1FamilyName} ${MyPatient1FirstName}    None    TRACE
+    Take My Screenshot
+    ${c} =    Get Element Count    link=${MyPatient1FamilyName} ${MyPatient1FirstName}
+    Run Keyword If    ${c}>0    Click Link    link=${MyPatient1FamilyName} ${MyPatient1FirstName}
 
 
 Test07
-    [Documentation]    Administrator connects to the website of TMP Web
+    [Documentation]    The web page shows the message "Documents are not available."
     [Tags]    TC007
-    My User Opens Internet Browser And Connects To My TMP Web    ${TmpWebAdministratorLogin}    ${TmpWebAdministratorPassword}
+    Wait Until Page Contains    Documents are not available.    timeout=15s
+    Wait Until Page Contains    Email Address:    timeout=15s
+    Wait Until Element Is Visible    id=userEmail    timeout=15s
+    Wait Until Element Is Visible    id=republishActionButton    timeout=15s
 
 
 Test08
-    [Documentation]    Administrator checks and validate the new user account
+    [Documentation]    Limited user account enters the email address and clicks the button "Republish documents"
     [Tags]    TC008
-    # You have to synchronize two servers (TMP Web and Keycloak) before accessing the list of user accounts. If not, you get the error message (500 Internal Server Error), the bug has not been fixed yet
-    Go To    https://${MyHostname}.telemiscloud.com/tmpweb/keycloak_synchro.app
-    Wait Until Page Contains    Keycloak synchronization    timeout=15s
-    Sleep    3s
-    Click Element    link=Back
-    Wait Until Page Contains    Manage users    timeout=15s
-    Sleep    2s
-    Page Should Contain Link    link=anthony    None    TRACE
+    Element Should Be Visible    id=userEmail
+    Element Should Be Visible    id=republishActionButton
+    Input Text    id=userEmail    ${TmpWebUser2Email}    clear=True
+    Sleep    1s
+    Textfield Value Should Be    id=userEmail    ${TmpWebUser2Email}
+    Click Button    id=republishActionButton
+    # The application takes about 43s to publish the study again
+    Wait Until Page Contains    Documents are being published    timeout=99s
+    Sleep    19s
     Take My Screenshot
-    Click Link    link=anthony
-    Wait Until Page Contains    Personal details    timeout=15s
-    Wait Until Page Contains    Delete user    timeout=15s
-    Sleep    3s
-    Take My Screenshot
-    Close All Browsers
 
 
 Test09
-    [Documentation]    The limited user account connects to the website for the very first time
+    [Documentation]    Once TMP Tool Web has published the study completely, check that the document is available on the web page
     [Tags]    TC009
-    My User Opens Internet Browser And Connects To My TMP Web    ${TmpWebAnthonyLogin}    ${TmpWebAnthonyPassword}
+    Wait Until Page Contains    ${MyPatient1FamilyName} ${MyPatient1FirstName}    timeout=300s
+    Wait Until Page Contains    Download the following study    timeout=15s
+    Wait Until Element Is Visible    link=DCM    timeout=15s
+    Wait Until Element Is Visible    link=JPG    timeout=15s
+    Wait Until Element Is Visible    link=${MyPatient1SeriesDescription}    timeout=15s
+    Wait Until Page Contains    Anonymous link:    timeout=15s
+    Wait Until Page Contains    Ordering physician:    timeout=15s
+    Sleep    2s
+    Take My Screenshot
 
 
 Test10
-    [Documentation]    The first warning message appears automatically in the first connection of the user account, it requests the user to enter the medical number
+    [Documentation]    Open the series with the image viewer
     [Tags]    TC010
-    Wait Until Page Contains     You must enter your personal unique medical number    timeout=15s
-    Wait Until Element Is Visible    id=med-number    timeout=15s
-    Wait Until Element Is Visible    css=.form-button    timeout=15s
+    Element Should Be Visible    link=${MyPatient1SeriesDescription}
+    Click Link    link=${MyPatient1SeriesDescription}
+    Wait Until Page Contains    Non-diagnostic quality    timeout=19s
+    Wait Until Element Is Visible    link=Full screen    timeout=15s
+    Wait Until Page Contains    ${MyPatient1FamilyName} ${MyPatient1FirstName}    timeout=15s
+    Wait Until Element Is Visible    link=DICOM download    timeout=15s
+    Wait Until Element Is Visible    link=JPEG download    timeout=15s
+    Sleep    4s
     Take My Screenshot
+    Log Out My User Session Of TMP Web
+    Sleep    1s
 
 
 Test11
-    [Documentation]    The second warning message (Required field) appears automatically below the input box Medical Number after clicking the button Submit without entering the medical number
+    [Documentation]    The limited user account receives the email message informing that the document is available in TMP Web
     [Tags]    TC011
-    Click Button    css=.form-button
-    Wait Until Page Contains    Required field    timeout=15s
-    Take My Screenshot
-
-
-Test12
-    [Documentation]    The third warning message (Medical number already exists) appears automatically below the input box Medical Number after entering a pre-existing medical number
-    [Tags]    TC012
-    Input Text    id=med-number    12341001    clear=True
+    Go To    http://localhost:8070/
+    Wait Until Page Contains    FakeSMTPServer    timeout=15s
+    Wait Until Page Contains    Inbox    timeout=15s
+    Wait Until Page Contains    ${TmpWebUser2Email}    timeout=15s
+    Wait Until Page Contains    Documents available online    timeout=15s
+    # CSS of the field "Documents available online"
+    Wait Until Element Is Visible    css=.MuiDataGrid-cell:nth-child(4) > .MuiDataGrid-cellContent    timeout=15s
     Sleep    1s
-    Textfield Value Should Be    id=med-number    12341001
-    Click Button    css=.form-button
-    Wait Until Page Contains    Medical number already exists    timeout=15s
+    Click Element    css=.MuiDataGrid-cell:nth-child(4) > .MuiDataGrid-cellContent
+    Wait Until Page Contains    Your documents are now available online    timeout=15s
     Take My Screenshot
 
 
-Test13
-    [Documentation]    The limited user account enters the valid medical number
-    [Tags]    TC013
-    Input Text    id=med-number    12341002    clear=True
-    Sleep    1s
-    Textfield Value Should Be    id=med-number    12341002
-    Take My Screenshot
-    Click Button    css=.form-button
-    Wait Until Page Contains    My Patients    timeout=15s
-    Take My Screenshot
-
-
-Test14
-    [Documentation]    The limited user account accesses the website of TMP Web
-    [Tags]    TC014
-    Page Should Contain Link    link=Settings    None    TRACE
-    Click Link    link=Settings
-    Sleep    3s
-    Wait Until Page Contains    Personal details    timeout=15s
-    Sleep    2s
-    Take My Screenshot
-    Log Out My User Session Of TMP Web
-    Close All Browsers
-    Sleep    1s
-
-
-Test15
-    [Documentation]    Administrator deletes the user account
-    [Tags]    TC015
-    My User Opens Internet Browser And Connects To My TMP Web    ${TmpWebAdministratorLogin}    ${TmpWebAdministratorPassword}
-    Wait Until Page Contains    Admin    timeout=15s
-    Click Link    link=Admin
-    Sleep    3s
-    Wait Until Page Contains    Manage users    timeout=15s
-    Sleep    3s
-    Page Should Contain Link    link=anthony    None    TRACE
-    Click Link    link=anthony
-    Wait Until Page Contains    Personal details    timeout=15s
-    Wait Until Page Contains    Delete user    timeout=15s
-    Sleep    4s
-    Click Element    link=Delete user
-    # Do NOT use both keyword (Handle Alert) and (Alert Should Be Present) together because the keyword (Alert Should Be Present) accepts the message automatically
-    ${message} =    Handle Alert    action=ACCEPT    timeout=15s
-    Sleep    3s
-    Take My Screenshot
-    # Synchronize two servers (TMP Web and Keycloak) to make sure that the user account does not exist anymore for the next tests
-    Go To    https://${MyHostname}.telemiscloud.com/tmpweb/keycloak_synchro.app
-    Sleep    2s
-    Log Out My User Session Of TMP Web
-
-
-Test16
+Test99
     [Documentation]    Shut down the browser and reset the cache
-    [Tags]    TC016
-    # Close All Browsers
-    Sleep    1s
+    [Tags]    TC099
+    Close All Browsers
