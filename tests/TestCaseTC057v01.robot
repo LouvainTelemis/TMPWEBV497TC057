@@ -254,13 +254,13 @@ Delete All My Email Messages In SMTP Server
 
 Test01
     [Documentation]    Reset the test results
-    [Tags]    TC001
+    [Tags]    CRITICALITY LOW
     Remove Files    ${MyFolderWorkspace}/${MyRepositoryName}/results/*.png
 
 
 Test02
     [Documentation]    Test and check SMTP server
-    [Tags]    TC002
+    [Tags]    CRITICALITY LOW
     Open Browser    http://localhost:8070/    Chrome    options=add_argument("--disable-infobars");add_argument("--lang\=en");binary_location=r"C:\\000\\chromeWin64ForTests\\chrome.exe"
     Maximize Browser Window
     Wait Until Page Contains    FakeSMTPServer    timeout=15s
@@ -269,7 +269,7 @@ Test02
 
 Test03
     [Documentation]    Reset the list of email messages in SMTP server
-    [Tags]    TC003
+    [Tags]    CRITICALITY LOW
     Delete All My Email Messages In SMTP Server
     Sleep    2s
     Go To    http://localhost:8070/
@@ -279,13 +279,13 @@ Test03
 
 Test04
     [Documentation]    Limited user account enters the login and password in order to access the website of TMP Web
-    [Tags]    TC004
+    [Tags]    CRITICALITY NORMAL
     My User Opens Internet Browser And Connects To My TMP Web    ${TmpWebUser2Login}    ${TmpWebUser2Password}
 
 
 Test05
     [Documentation]    Limited user account is looking for the study
-    [Tags]    TC005
+    [Tags]    CRITICALITY NORMAL
     Wait Until Element Is Visible    link=My Patients    timeout=15s
     Click Link    link=My Patients
     Sleep    1s
@@ -301,7 +301,7 @@ Test05
 
 Test06
     [Documentation]    Limited user account selects and opens the study on the web page
-    [Tags]    TC006
+    [Tags]    CRITICALITY NORMAL
     Page Should Contain Link    link=${MyPatient1FamilyName} ${MyPatient1FirstName}    None    TRACE
     Take My Screenshot
     ${c} =    Get Element Count    link=${MyPatient1FamilyName} ${MyPatient1FirstName}
@@ -310,7 +310,7 @@ Test06
 
 Test07
     [Documentation]    The web page shows the message "Documents are not available."
-    [Tags]    TC007
+    [Tags]    CRITICALITY HIGH
     Wait Until Page Contains    Documents are not available.    timeout=15s
     Wait Until Page Contains    Email Address:    timeout=15s
     Wait Until Element Is Visible    id=userEmail    timeout=15s
@@ -319,7 +319,7 @@ Test07
 
 Test08
     [Documentation]    Limited user account enters the email address and clicks the button "Republish documents"
-    [Tags]    TC008
+    [Tags]    CRITICALITY HIGH
     Element Should Be Visible    id=userEmail
     Element Should Be Visible    id=republishActionButton
     Input Text    id=userEmail    ${TmpWebUser2Email}    clear=True
@@ -334,7 +334,7 @@ Test08
 
 Test09
     [Documentation]    Once TMP Tool Web has published the study completely, check that the document is available on the web page
-    [Tags]    TC009
+    [Tags]    CRITICALITY HIGH
     Wait Until Page Contains    ${MyPatient1FamilyName} ${MyPatient1FirstName}    timeout=300s
     Wait Until Page Contains    Download the following study    timeout=15s
     Wait Until Element Is Visible    link=DCM    timeout=15s
@@ -348,7 +348,7 @@ Test09
 
 Test10
     [Documentation]    Open the series with the image viewer
-    [Tags]    TC010
+    [Tags]    CRITICALITY NORMAL
     Element Should Be Visible    link=${MyPatient1SeriesDescription}
     Click Link    link=${MyPatient1SeriesDescription}
     Wait Until Page Contains    Non-diagnostic quality    timeout=19s
@@ -364,7 +364,7 @@ Test10
 
 Test11
     [Documentation]    The limited user account receives the email message informing that the document is available in TMP Web
-    [Tags]    TC011
+    [Tags]    CRITICALITY NORMAL
     Go To    http://localhost:8070/
     Wait Until Page Contains    FakeSMTPServer    timeout=15s
     Wait Until Page Contains    Inbox    timeout=15s
@@ -380,5 +380,5 @@ Test11
 
 Test99
     [Documentation]    Shut down the browser and reset the cache
-    [Tags]    TC099
+    [Tags]    CRITICALITY LOW
     Close All Browsers
