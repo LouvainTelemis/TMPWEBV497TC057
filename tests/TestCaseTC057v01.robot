@@ -378,7 +378,7 @@ Test11
     Take My Screenshot
 
 
-Test99
+Test12
     [Documentation]    Shut down the browser and reset the cache
     [Tags]    CRITICALITY LOW
     Close All Browsers
