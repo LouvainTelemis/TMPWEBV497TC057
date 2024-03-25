@@ -20,7 +20,7 @@ ${MyPatient1FamilyName}    AZ127431
 ${MyPatient1FirstName}    ALBERT
 ${MyPatient1SeriesDescription}    CTOP127431
 
-${MyHostname}    demo5757
+${MyHostname}    demo6733
 ${MyPortNumber}    10000
 #  Do not use the brackets to define the variable of bearer token
 ${bearerToken}    Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJJbnN0YWxsZXIiLCJuYW1lIjoiSW5zdGFsbGVyIiwiaXNzIjoiVGVsZW1pcyIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxODYxOTIwMDAwfQ.pynnZ69Qx50wuz0Gh4lx-FHZznrcQkbMm0o-PLhb3S0
